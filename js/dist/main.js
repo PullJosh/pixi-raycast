@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  * @license
  * pixi.js - v1.5.3
@@ -14643,7 +14643,7 @@ Object.defineProperty(PIXI.RGBSplitFilter.prototype, 'angle', {
 function Camera(x, y) {
     this.position = {x: x, y: y};
     this.direction = {x: -1, y: 0};
-    this.plane = {x: 0, y: 1};
+    this.plane = {x: 0, y:1};
 }
 
 Camera.prototype.update = function (dt) {
@@ -14679,8 +14679,7 @@ renderer.view.className = 'game';
 
 // add the renderer view element to the DOM
 document.getElementById('gameContainer').appendChild(renderer.view);
-var loader = new PIXI.AssetLoader(['assets/img/redbrick.png', 
-                                   'assets/img/pistol.png', 
+var loader = new PIXI.AssetLoader(['assets/img/redbrick.png',
                                    'assets/img/skybox.png',
                                    'assets/img/wood.png',
                                    'assets/img/purplestone.png',
@@ -14691,7 +14690,7 @@ var loader = new PIXI.AssetLoader(['assets/img/redbrick.png',
                                    'assets/img/colorstone.png',
                                    'assets/img/barrel.png',
                                    'assets/img/greenlight.png',
-                                   'assets/img/pillar.png'], 
+                                   'assets/img/pillar.png'],
                                    true);
 loader.load();
 
@@ -14708,7 +14707,7 @@ function start () {
   // add layers (DOCs)
   UI.addLayer('skybox');
   UI.addLayer('walls');
-  UI.addLayer('gun');
+  UI.addLayer('sprites');
 
   var sprite, walls = UI.getLayer('walls');
   // Create wall 'slice' sprites (ie rays)
@@ -14738,22 +14737,22 @@ var Key = {
   RIGHT: 39,
   DOWN: 40,
   SPACE: 32,
-  
+
   isDown: function(keyCode) {
     return this._pressed[keyCode];
   },
-  
+
   onKeydown: function(event) {
     this._pressed[event.keyCode] = true;
-    if (event.keyCode == this.LEFT || 
-        event.keyCode == this.UP || 
-        event.keyCode == this.RIGHT || 
+    if (event.keyCode == this.LEFT ||
+        event.keyCode == this.UP ||
+        event.keyCode == this.RIGHT ||
         event.keyCode == this.DOWN ||
         event.keyCode == this.SPACE) {
       event.preventDefault();
     }
   },
-  
+
   onKeyup: function(event) {
     delete this._pressed[event.keyCode];
   }
@@ -14794,6 +14793,9 @@ function Map() {
       [2,2,0,0,0,0,0,2,2,2,0,0,0,2,2,0,5,0,5,0,0,0,5,5],
       [2,2,2,2,1,2,2,2,2,2,2,1,2,2,2,5,5,5,5,5,5,5,5,5]
     ];
+    this.sprites = [
+      {x:20.5, y:11.5, tex:10}
+    ];
     this.skyTexture = new PIXI.Texture.fromImage('assets/img/skybox.png');
     this.skybox = new PIXI.TilingSprite(this.skyTexture, Config.screenWidth, Config.screenHeight / 2);
     this.skybox.generateTilingTexture(false);
@@ -14816,33 +14818,15 @@ var Player = function (x, y, map) {
     this.position.x = x;
     this.position.y = y;
     this.map = map;
-    this.gun = new PIXI.MovieClip(Resources.get('gun'));
-    UI.getLayer('gun').addChild(this.gun);
-    this.gun.position.y = Config.screenHeight - 140;
-    this.gun.position.x = (Config.screenWidth / 2);
-    this.gunPos = Config.screenHeight - 140;
-    this.gun.scale = {x: 1.5, y: 1.5};
-    this.gun.animationSpeed = 0.28;
-    this.gun.loop = false;
-    this.gunDy = 0;
-
-    this.gun.onComplete = function () {
-      setTimeout(function () {
-        this.gunFiring = false;
-      }.bind(this), 200);
-      this.gun.gotoAndStop(0);
-    }.bind(this);
 }
 
-Player.prototype = new Camera(0, 0); 
+Player.prototype = new Camera(0, 0);
 Player.prototype.constructor = Player;
 
 Player.prototype.update = function (frameTime) {
     this.moveSpeed = frameTime * 5;
     this.rotSpeed = frameTime * 3;
-    this.moveGun = false;
     if (Key.isDown(Key.UP)) {
-      this.moveGun = true;
       if (this.map.wallGrid[Math.floor(this.position.x + this.direction.x * this.moveSpeed * 4)]
                       [Math.floor(this.position.y)] == false) {
         this.position.x += this.direction.x * this.moveSpeed;
@@ -14854,7 +14838,6 @@ Player.prototype.update = function (frameTime) {
     }
 
     if (Key.isDown(Key.DOWN)) {
-      this.moveGun = true;
       if (this.map.wallGrid[Math.floor(this.position.x - this.direction.x * this.moveSpeed * 4)]
                       [Math.floor(this.position.y)] == false) {
         this.position.x -= this.direction.x * this.moveSpeed;
@@ -14884,56 +14867,20 @@ Player.prototype.update = function (frameTime) {
       this.plane.x = this.plane.x * Math.cos(this.rotSpeed) - this.plane.y * Math.sin(this.rotSpeed);
       this.plane.y = this.oldPlaneX * Math.sin(this.rotSpeed) + this.plane.y * Math.cos(this.rotSpeed);
     }
-
-    if (!this.gunFiring && Key.isDown(Key.SPACE)) {
-      this.gun.play();
-      this.gunFiring = true;
-      this.gunDy += 30;
-
-      if (this.gunDy > 75) {
-        this.gunDy = 50;
-      }
-    }
-
-    if (this.moveGun) {
-      if (this.gunUp && this.gunDy < 8) {
-        this.gunDy += 35 * frameTime;
-      } else {
-        this.gunUp = false;
-      }
-
-      if (!this.gunUp && this.gunDy > -3) {
-        this.gunDy -= 45 * frameTime;
-      } else {
-        this.gunUp = true;
-      }
-
-      if (this.gunDy > 12) {
-        this.gunDy -= 2;
-      } 
-      if (this.gunDy < -7) {
-        this.gunDy += 2;
-      }
-    } else {
-      if (this.gunDy > 3) {
-        this.gunDy -= 2;
-      } 
-      if (this.gunDy < -3) {
-        this.gunDy += 2;
-      }
-      this.gunUp = true;
-    }
-    this.gun.position.y = this.gunPos - this.gunDy;
 };
 
 module.exports = Player;
 },{"../lib/pixi.dev.js":1,"./camera.js":2,"./config.js":3,"./input.js":5,"./resources.js":9,"./ui.js":10}],8:[function(require,module,exports){
-// Declaring all the variables outside of the loop is more efficient, 
-// and works well with the original c++ code which is very procedural
-var rayIdx, cameraX, rayPosX, rayPosY, rayDirX, rayDirY, mapX, mapY, 
-        sideDistX, sideDistY, deltaDistX, deltaDistY, perpWallDist, stepX,
-        stepY, hit, side, lineHeight, drawStart, drawEnd, color, time = 0, 
-        oldTime = 0, frameTime, tint, shadowDepth = 12;
+/* Declaring all the variables outside of the loop is more efficient,
+   and works well with the original c++ code which is very procedural
+   DON'T WORRY - as we're using browserify these will be scoped to
+   this module */
+var rayIdx, cameraX, rayPosX, rayPosY, rayDirX, rayDirY, mapX, mapY,
+    sideDistX, sideDistY, deltaDistX, deltaDistY, perpWallDist, stepX,
+    stepY, hit, side, lineHeight, drawStart, drawEnd, color, time = 0,
+    oldTime = 0, frameTime, tint, zBuffer = [], spriteOrder = [],
+    spriteDistance = [], spriteIdx, oldTime = 0, frameTime, tint,
+    shadowDepth = 12;
 
 var Key = require('./input.js'),
     Config = require('./config.js'),
@@ -14960,9 +14907,9 @@ function drawWalls(camera, map) {
     mapX = Math.floor(rayPosX);
     mapY = Math.floor(rayPosY);
     // Length of ray from current pos to next x or y side
-    deltaDistX = Math.sqrt(1 + (rayDirY * rayDirY) / 
+    deltaDistX = Math.sqrt(1 + (rayDirY * rayDirY) /
                            (rayDirX * rayDirX));
-    deltaDistY = Math.sqrt(1 + (rayDirX * rayDirX) / 
+    deltaDistY = Math.sqrt(1 + (rayDirX * rayDirX) /
                            (rayDirY * rayDirY));
     // was there a wall hit?
     hit = 0;
@@ -15002,10 +14949,10 @@ function drawWalls(camera, map) {
     }
     // calculate distance projected
     if (side == 0) {
-      perpWallDist = Math.abs((mapX - rayPosX + (1 - stepX) / 2) / 
+      perpWallDist = Math.abs((mapX - rayPosX + (1 - stepX) / 2) /
                               rayDirX);
     } else {
-      perpWallDist = Math.abs((mapY - rayPosY + (1 - stepY) / 2) / 
+      perpWallDist = Math.abs((mapY - rayPosY + (1 - stepY) / 2) /
                               rayDirY);
     }
     // calculate height of line
@@ -15048,12 +14995,27 @@ function drawWalls(camera, map) {
     line.tint = tint;
     // grab the texture for the index in the map grid
     texNum = map.wallGrid[mapX][mapY] - 1;
-    // Grab the texture slice (these are presliced on load so 
+    // Grab the texture slice (these are presliced on load so
     // no need for pixel buffer antics)
     line.setTexture(Resources.get('texture')[texNum][texX]);
     line.position.y = drawStart;
     line.height = drawEnd - drawStart;
+
+    // store z dist for sprites!
+    zBuffer[rayIdx] = perpWallDist;
   }
+
+  map.sprites.sort(function (a, b) {
+    var distanceA = ((posX - a.x) * (posX - a.x) + (posY - a.y) * (posY - a.y));
+    var distanceB = ((posX - b.x) * (posX - b.x) + (posY - b.y) * (posY - b.y));
+    if (distanceA < distanceB) {
+      return -1
+    }
+    if (distanceA > distanceB) {
+      return 1;
+    }
+    return 0;
+  });
 }
 
 module.exports = update;
@@ -15084,12 +15046,6 @@ var Resources = {
             texture[7][x] = new PIXI.Texture(color, new PIXI.Rectangle(x, 0, 1, Config.texHeight));
         }
         this.store('texture', texture);
-        var gunTexture = [];
-        var gunBase = PIXI.BaseTexture.fromImage('assets/img/pistol.png');
-        for (var i = 0; i < 3; i++) {
-          gunTexture[i] = new PIXI.Texture(gunBase, new PIXI.Rectangle(i * 145, 0, 145, 145));
-        }
-        this.store('gun', gunTexture);
     },
     store: function (name, resource) {
         this.pool[name] = resource;
@@ -15159,4 +15115,4 @@ var UI = {
 };
 
 module.exports = UI;
-},{"../lib/pixi.dev.js":1}]},{},[4])
+},{"../lib/pixi.dev.js":1}]},{},[4]);
