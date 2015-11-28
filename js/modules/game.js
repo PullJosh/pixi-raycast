@@ -16,7 +16,8 @@ renderer.view.className = 'game';
 
 // add the renderer view element to the DOM
 document.getElementById('gameContainer').appendChild(renderer.view);
-var loader = new PIXI.AssetLoader(['assets/img/redbrick.png',
+var loader = new PIXI.AssetLoader(['assets/img/redbrick.png', 
+                                   'assets/img/pistol.png', 
                                    'assets/img/skybox.png',
                                    'assets/img/wood.png',
                                    'assets/img/purplestone.png',
@@ -45,6 +46,7 @@ function start () {
   UI.addLayer('skybox');
   UI.addLayer('walls');
   UI.addLayer('sprites');
+  UI.addLayer('gun');
 
   var sprite, walls = UI.getLayer('walls');
   // Create wall 'slice' sprites (ie rays)
