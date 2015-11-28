@@ -23,12 +23,6 @@ var Resources = {
             texture[7][x] = new PIXI.Texture(color, new PIXI.Rectangle(x, 0, 1, Config.texHeight));
         }
         this.store('texture', texture);
-        var gunTexture = [];
-        var gunBase = PIXI.BaseTexture.fromImage('assets/img/pistol.png');
-        for (var i = 0; i < 3; i++) {
-          gunTexture[i] = new PIXI.Texture(gunBase, new PIXI.Rectangle(i * 145, 0, 145, 145));
-        }
-        this.store('gun', gunTexture);
     },
     store: function (name, resource) {
         this.pool[name] = resource;
