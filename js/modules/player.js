@@ -16,6 +16,12 @@ Player.prototype = new Camera(0, 0);
 Player.prototype.constructor = Player;
 
 Player.prototype.update = function (frameTime) {
+
+    if(this.position.y < 10 && this.position.y > 7) {
+        this.position.y -= 7;
+        console.log("hai");
+    }
+
     this.moveSpeed = frameTime * 3;
     this.rotSpeed = frameTime * 2;
     if (Key.isDown(Key.UP)) {

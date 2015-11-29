@@ -55,7 +55,7 @@ function start () {
   }
 
   var map = new Map();
-  var player = new Player(22, 11.5, map);
+  var player = new Player(14.5, 13, map);
 
   requestAnimFrame( animate );
   setInterval(function () {
