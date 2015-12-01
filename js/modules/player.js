@@ -5,23 +5,25 @@ Resources = require('./resources.js'),
     PIXI = require('../lib/pixi.dev.js'),
     Config = require('./config.js');
 
-var Player = function (x, y, map) {
+var Player = function (x, y, map, getMap) {
     this.position.x = x;
     this.position.y = y;
     this.map = map;
     this.moveVel = 0;
+    this.getMap = getMap;
 }
 
 Player.prototype = new Camera(0, 0);
 Player.prototype.constructor = Player;
 
 Player.prototype.update = function (frameTime) {
+    var map = this.getMap();
 
-    if(this.position.y < 10 && this.position.y > 7) {
-        this.position.y -= 7;
-        console.log("hai");
+    if (map.layers[map.currentLayer].condition() !== false) {
+        map.currentLayer = map.layers[map.currentLayer].condition();
     }
-
+    map.wallGrid = map.layers[map.currentLayer].walls;
+    this.map = map;
     this.moveSpeed = frameTime * 3;
     this.rotSpeed = frameTime * 2;
     if (Key.isDown(Key.UP)) {
@@ -47,14 +49,13 @@ Player.prototype.update = function (frameTime) {
         hitWall = true;
     }
 
-    if(hitWall) {
+    if (hitWall) {
         this.moveVel = 0;
     }
 
     this.moveVel *= 0.8;
 
     if (Key.isDown(Key.RIGHT)) {
-        this.map.skybox.tilePosition.x -= 1000 * frameTime;
         this.oldDirX = this.direction.x;
         this.direction.x = this.direction.x * Math.cos(-this.rotSpeed) - this.direction.y * Math.sin(-this.rotSpeed);
         this.direction.y = this.oldDirX * Math.sin(-this.rotSpeed) + this.direction.y * Math.cos(-this.rotSpeed);
@@ -64,7 +65,6 @@ Player.prototype.update = function (frameTime) {
     }
 
     if (Key.isDown(Key.LEFT)) {
-        this.map.skybox.tilePosition.x += 1000 * frameTime;
         this.oldDirX = this.direction.x;
         this.direction.x = this.direction.x * Math.cos(this.rotSpeed) - this.direction.y * Math.sin(this.rotSpeed);
         this.direction.y = this.oldDirX * Math.sin(this.rotSpeed) + this.direction.y * Math.cos(this.rotSpeed);

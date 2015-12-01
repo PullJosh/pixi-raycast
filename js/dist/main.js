@@ -14718,7 +14718,7 @@ function start () {
   }
 
   var map = new Map();
-  var player = new Player(14.5, 13, map);
+  player = new Player(14.5, 6, map, function() {return map;});
 
   requestAnimFrame( animate );
   setInterval(function () {
@@ -14767,33 +14767,120 @@ var Config = require('./config.js'),
     PIXI = require('../lib/pixi.dev.js'),
     UI = require('./ui.js');
 function Map() {
-    this.wallGrid = [
-      [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-      [2,0,0,0,0,0,0,2,0,0,0,0,0,0,2],
-      [2,0,0,0,0,0,0,2,0,0,0,0,0,0,2],
-      [2,0,0,2,2,0,0,2,0,0,2,2,0,0,2],
-      [2,0,0,2,2,0,0,2,0,0,2,2,0,0,2],
-      [2,0,0,0,0,0,0,2,0,0,2,2,0,0,2],
-      [2,0,0,0,0,0,0,2,0,0,2,2,0,0,2],
-      [2,2,2,2,2,2,2,2,2,2,2,2,0,0,2],
-      [2,2,2,2,2,2,2,2,2,2,2,2,0,0,2],
-      [2,2,2,2,2,2,2,2,2,2,2,2,0,0,2],
-      [2,2,2,2,2,2,2,2,2,2,2,2,0,0,2],
-      [2,2,2,2,2,2,2,2,2,2,2,2,0,0,2],
-      [2,2,2,2,2,2,2,2,2,2,2,2,0,0,2],
-      [2,2,2,2,2,2,2,2,2,2,2,2,0,0,2],
-      [2,2,2,2,2,2,2,2,2,2,2,2,0,0,2],
-      [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+    this.layers = [
+        {
+            walls: [
+                  [2,2,2,2,2,2,2,2],
+                  [2,0,0,0,0,0,0,2],
+                  [2,0,0,0,0,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,2,2,2,2,0,0,2],
+                  [2,2,2,2,2,0,0,2],
+                  [2,2,2,2,2,0,0,2],
+                  [2,2,2,2,2,0,0,2],
+                  [2,2,2,2,2,0,0,2],
+                  [2,2,2,2,2,2,2,2]
+            ],
+            condition: function() {
+                if(player.position.y < 4) {
+                  return 1;
+                }
+                return false;
+            }
+        },
+        {
+            walls: [
+                  [2,2,2,2,2,2,2,2],
+                  [2,0,0,0,0,0,0,2],
+                  [2,0,0,0,0,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+                  [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+                  [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+                  [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,2],
+                  [2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,0,0,2],
+                  [2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2],
+                  [2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2],
+                  [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+            ],
+            condition: function() {
+                if(player.position.x > 12) {
+                    return 2;
+                }
+                if(player.position.y > 4 && player.position.x < 5) {
+                    return 0;
+                }
+                return false;
+            }
+        },
+        {
+            walls: [
+                  [2,2,2,2,2,2,2,2],
+                  [2,0,0,0,0,0,0,2],
+                  [2,0,0,0,0,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2,2,2,2,2,2,2,2,2,2,2],
+                  [2,0,0,2,2,0,0,2,2,2,2,0,0,2,2,2,2,2],
+                  [2,0,0,2,2,0,0,2,2,2,2,0,0,2,2,2,2,2],
+                  [2,0,0,2,2,2,2,2,2,2,2,0,0,2,2,2,2,2],
+                  [2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2],
+                  [2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2],
+                  [2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,0,0,2],
+                  [2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,0,0,2],
+                  [2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2],
+                  [2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2],
+                  [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+            ],
+            condition: function() {
+                if(player.position.y < 15) {
+                    return 3;
+                }
+                if(player.position.x < 12) {
+                    return 1;
+                }
+                return false;
+            }
+        },
+        {
+            walls: [
+                  [2,2,2,2,2,2,2,2],
+                  [2,0,0,0,0,0,0,2],
+                  [2,0,0,0,0,0,0,2],
+                  [2,0,0,2,2,0,0,2],
+                  [2,0,0,2,2,0,0,2,2,2,2,2,2,2,2,2,2,2],
+                  [2,0,0,2,2,0,0,2,2,2,2,0,0,2,2,2,2,2],
+                  [2,0,0,2,2,0,0,2,2,2,2,0,0,2,2,2,2,2],
+                  [2,0,0,2,2,2,2,2,2,2,2,0,0,2,2,2,2,2],
+                  [2,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,2],
+                  [2,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,2],
+                  [2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,0,0,2],
+                  [2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,0,0,2],
+                  [2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2],
+                  [2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2],
+                  [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+            ],
+            condition: function() {
+                if(player.position.y > 15) {
+                    return 2;
+                }
+                return false;
+            }
+        }
     ];
+    this.currentLayer = 0;
+    this.wallGrid = this.layers[this.currentLayer].walls;
     this.sprites = [
       //{x:20.5, y:11.5, tex:10}
     ];
-    this.skyTexture = new PIXI.Texture.fromImage('assets/img/skybox.png');
-    this.skybox = new PIXI.TilingSprite(this.skyTexture, Config.screenWidth, Config.screenHeight / 2);
-    this.skybox.generateTilingTexture(false);
-    this.skybox.alpha = 0.6;
-    this.skybox.tileScale = {x: 0.5, y: 0.4};
-    UI.getLayer('skybox').addChild(this.skybox);
 }
 
 module.exports = Map;
@@ -14806,23 +14893,25 @@ Resources = require('./resources.js'),
     PIXI = require('../lib/pixi.dev.js'),
     Config = require('./config.js');
 
-var Player = function (x, y, map) {
+var Player = function (x, y, map, getMap) {
     this.position.x = x;
     this.position.y = y;
     this.map = map;
     this.moveVel = 0;
+    this.getMap = getMap;
 }
 
 Player.prototype = new Camera(0, 0);
 Player.prototype.constructor = Player;
 
 Player.prototype.update = function (frameTime) {
+    var map = this.getMap();
 
-    if(this.position.y < 10 && this.position.y > 7) {
-        this.position.y -= 7;
-        console.log("hai");
+    if (map.layers[map.currentLayer].condition() !== false) {
+        map.currentLayer = map.layers[map.currentLayer].condition();
     }
-
+    map.wallGrid = map.layers[map.currentLayer].walls;
+    this.map = map;
     this.moveSpeed = frameTime * 3;
     this.rotSpeed = frameTime * 2;
     if (Key.isDown(Key.UP)) {
@@ -14848,14 +14937,13 @@ Player.prototype.update = function (frameTime) {
         hitWall = true;
     }
 
-    if(hitWall) {
+    if (hitWall) {
         this.moveVel = 0;
     }
 
     this.moveVel *= 0.8;
 
     if (Key.isDown(Key.RIGHT)) {
-        this.map.skybox.tilePosition.x -= 1000 * frameTime;
         this.oldDirX = this.direction.x;
         this.direction.x = this.direction.x * Math.cos(-this.rotSpeed) - this.direction.y * Math.sin(-this.rotSpeed);
         this.direction.y = this.oldDirX * Math.sin(-this.rotSpeed) + this.direction.y * Math.cos(-this.rotSpeed);
@@ -14865,7 +14953,6 @@ Player.prototype.update = function (frameTime) {
     }
 
     if (Key.isDown(Key.LEFT)) {
-        this.map.skybox.tilePosition.x += 1000 * frameTime;
         this.oldDirX = this.direction.x;
         this.direction.x = this.direction.x * Math.cos(this.rotSpeed) - this.direction.y * Math.sin(this.rotSpeed);
         this.direction.y = this.oldDirX * Math.sin(this.rotSpeed) + this.direction.y * Math.cos(this.rotSpeed);
@@ -14876,7 +14963,6 @@ Player.prototype.update = function (frameTime) {
 };
 
 module.exports = Player;
-
 },{"../lib/pixi.dev.js":1,"./camera.js":2,"./config.js":3,"./input.js":5,"./resources.js":9,"./ui.js":10}],8:[function(require,module,exports){
 /* Declaring all the variables outside of the loop is more efficient,
    and works well with the original c++ code which is very procedural
